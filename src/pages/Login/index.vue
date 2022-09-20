@@ -1,14 +1,10 @@
 <template>
-  <div>
-    <!-- 内容区域 -->
-    <router-view></router-view>
-  </div>
+  <div>登录页</div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'Login'
 }
 </script>
-
 <style lang="less" scoped></style>

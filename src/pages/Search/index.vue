@@ -1,14 +1,14 @@
 <template>
   <div>
-    <!-- 内容区域 -->
-    <router-view></router-view>
+    <h1>搜索页</h1>
+    params--- {{ keyword }}
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'Search',
+  props: ['keyword']
 }
 </script>
-
 <style lang="less" scoped></style>

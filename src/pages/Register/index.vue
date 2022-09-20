@@ -1,14 +1,10 @@
 <template>
-  <div>
-    <!-- 内容区域 -->
-    <router-view></router-view>
-  </div>
+  <div>注册页</div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'Register'
 }
 </script>
-
 <style lang="less" scoped></style>
