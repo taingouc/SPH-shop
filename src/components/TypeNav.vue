@@ -2,7 +2,34 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
+      <div @mouseleave="hiddenCategory" @mouseenter="showCategory">
+        <h2 class="all">全部商品分类</h2>
+        <transition name="sort">
+          <div class="sort" v-show="categoryShow">
+            <div class="all-sort-list2" @click="goSearch">
+              <div class="item" v-for="(c1, index) in categoryList" :key="c1.categoryId" @mouseenter="changeIndex(index)" :class="index == i ? 'MoveColor' : ''">
+                <h3>
+                  <a :data-categoryName="c1.categoryName" :data-categoryId="c1.categoryId">{{ c1.categoryName }}</a>
+                </h3>
+                <div class="item-list clearfix">
+                  <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
+                    <dl class="fore">
+                      <dt>
+                        <a :data-categoryName="c2.categoryName" :data-categoryId="c2.categoryId">{{ c2.categoryName }}</a>
+                      </dt>
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                          <a :data-categoryName="c3.categoryName" :data-categoryId="c3.categoryId">{{ c3.categoryName }}</a>
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </div>
       <nav class="nav">
         <a href="###">服装城</a>
         <a href="###">美妆馆</a>
@@ -13,39 +40,43 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <div class="all-sort-list2">
-          <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
-            <h3>
-              <a href="">{{ c1.categoryName }}</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
-                <dl class="fore">
-                  <dt>
-                    <a href="">{{ c2.categoryName }}</a>
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                      <a href="">{{ c3.categoryName }}</a>
-                    </em>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { throttle } from 'lodash'
 import { mapState } from 'vuex'
 export default {
   name: 'TypeNav',
   data() {
-    return {}
+    return {
+      i: -1
+    }
+  },
+  props: {
+    categoryShow: {
+      Type: Boolean,
+      default: true
+    }
+  },
+  methods: {
+    changeIndex: throttle(function (index) {
+      this.i = index
+    }, 50),
+    goSearch(e) {
+      if (e.target.dataset.categoryname) {
+        let query = { categoryName: e.target.dataset.categoryname, categoryId: e.target.dataset.categoryid }
+        this.$router.push({ name: 'search', query })
+      }
+    },
+    showCategory() {
+      this.$emit('show', true)
+    },
+    hiddenCategory() {
+      this.i = -1
+      this.$emit('hidden', false)
+    }
   },
   computed: {
     ...mapState({
@@ -98,7 +129,6 @@ export default {
       position: absolute;
       background: #fafafa;
       z-index: 999;
-
       .all-sort-list2 {
         .item {
           h3 {
@@ -111,6 +141,7 @@ export default {
 
             a {
               color: #333;
+              text-decoration: none;
             }
           }
 
@@ -124,7 +155,6 @@ export default {
             border: 1px solid #ddd;
             top: 0;
             z-index: 9999 !important;
-
             .subitem {
               float: left;
               width: 650px;
@@ -176,6 +206,21 @@ export default {
         }
       }
     }
+    .sort-enter {
+      height: 0;
+      opacity: 0;
+    }
+    .sort-enter-to {
+      height: 461px;
+      opacity: 1;
+      overflow: hidden;
+    }
+    .sort-enter-active {
+      transition: all 0.4s linear;
+    }
   }
+}
+.MoveColor {
+  background-color: skyblue;
 }
 </style>

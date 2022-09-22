@@ -1,14 +1,20 @@
 <template>
-  <div>
-    <h1>搜索页</h1>
-    params--- {{ keyword }}
-  </div>
+  <TypeNav :categoryShow="show" @show="changeShow" @hidden="changeShow"></TypeNav>
 </template>
 
 <script>
 export default {
   name: 'Search',
-  props: ['keyword']
+  data() {
+    return {
+      show: false
+    }
+  },
+  methods: {
+    changeShow(boolean) {
+      this.show = boolean
+    }
+  }
 }
 </script>
 <style lang="less" scoped></style>
