@@ -53,7 +53,12 @@ export default {
   methods: {
     goSearch() {
       if (this.keyWord === '') return
-      this.$router.push({ name: 'search', params: { keyword: this.keyWord } })
+      if (this.$route.query) {
+        const query = this.$route.query
+        this.$router.push({ name: 'search', params: { keyword: this.keyWord }, query })
+      } else {
+        this.$router.push({ name: 'search', params: { keyword: this.keyWord } })
+      }
     }
   }
 }

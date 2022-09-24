@@ -1,13 +1,17 @@
-import { getCategoryList } from '@/api/index.js'
+import { getCategoryList, getBannerList } from '@/api/index.js'
 export default {
   // 定义数据
   state: {
-    categoryList: []
+    categoryList: [],
+    bannerList: []
   },
   // 同步方法
   mutations: {
     CategoryList(state, val) {
       state.categoryList = val
+    },
+    bannerList(state, val) {
+      state.bannerList = val
     }
   },
   // 异步方法
@@ -16,6 +20,10 @@ export default {
       const { data } = await getCategoryList()
       data.pop()
       commit('CategoryList', data)
+    },
+    async getBannerList({ commit }) {
+      const { data } = await getBannerList()
+      commit('bannerList', data)
     }
   },
   // 计算属性

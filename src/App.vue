@@ -10,6 +10,9 @@ export default {
   name: 'App',
   data() {
     return {}
+  },
+  mounted() {
+    this.$store.dispatch('home/CategoryListAsync')
   }
 }
 </script>

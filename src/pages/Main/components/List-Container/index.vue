@@ -4,27 +4,20 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img src="./images/banner1.jpg" />
-            </div>
-            <!-- <div class="swiper-slide">
-              <img src="./images/banner2.jpg" />
-            </div>
-            <div class="swiper-slide">
-              <img src="./images/banner3.jpg" />
-            </div>
-            <div class="swiper-slide">
-              <img src="./images/banner4.jpg" />
-            </div> -->
+        <div class="swiper-container" id="mySwiper" @mouseenter="stopSwiper" @mouseleave="startSwiper">
+          <ul class="swiper-wrapper">
+            <li class="swiper-slide" v-for="(item, i) in bannerList" :key="item.id" :class="{ fade: index == i }">
+              <img :src="item.imgUrl" />
+            </li>
+          </ul>
+          <!-- 上一张 -->
+          <span href="javascript:;" class="swiper-btn prev" @click="changeIndex(-1)"><i class="iconfont icon-angle-left"></i></span>
+          <!-- 下一张 -->
+          <span href="javascript:;" class="swiper-btn next" @click="changeIndex(1)"><i class="iconfont icon-angle-right"></i></span>
+          <!-- 指示圆点 -->
+          <div class="swiper-indicator">
+            <span v-for="(item, i) in bannerList" :key="i" @click="index = i" :class="{ active: index == i }"></span>
           </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-
-          <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
         </div>
       </div>
       <div class="right">
@@ -101,8 +94,63 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-  name: 'List-Container'
+  name: 'List-Container',
+  data() {
+    return {
+      index: 0,
+      timer: null
+    }
+  },
+  methods: {
+    changeIndex(val) {
+      const i = this.index + val
+      if (i > 3) {
+        this.index = 0
+        return
+      }
+      if (i < 0) {
+        this.index = 3
+        return
+      }
+      this.index = i
+    },
+    autoPlayFn() {
+      clearInterval(this.timer)
+      this.timer = setInterval(() => {
+        if (this.index == 3) {
+          this.index = 0
+        } else {
+          this.index++
+        }
+      }, 2000)
+    },
+    stopSwiper() {
+      clearInterval(this.timer)
+    },
+    startSwiper() {
+      this.autoPlayFn()
+    }
+  },
+  mounted() {
+    this.$store.dispatch('home/getBannerList')
+  },
+  watch: {
+    bannerList: {
+      handler(newVal) {
+        if (newVal.length) {
+          this.autoPlayFn()
+        }
+      },
+      immediate: true
+    }
+  },
+  computed: {
+    ...mapState({
+      bannerList: (state) => state.home.bannerList
+    })
+  }
 }
 </script>
 
@@ -274,6 +322,83 @@ export default {
             opacity: 1;
           }
         }
+      }
+    }
+  }
+}
+.swiper {
+  &-container {
+    position: relative;
+    height: 100%;
+    &:hover {
+      .swiper-btn {
+        opacity: 1;
+      }
+    }
+  }
+  &-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  &-slide {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transition: opacity 0.5s linear;
+    &.fade {
+      opacity: 1;
+      z-index: 1;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  &-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.2);
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    top: 210px;
+    z-index: 2;
+    text-align: center;
+    line-height: 44px;
+    opacity: 0;
+    transition: all 0.5s;
+    &.prev {
+      left: 20px;
+    }
+    &.next {
+      right: 20px;
+    }
+    &:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
+  &-indicator {
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+    z-index: 2;
+    width: 100%;
+    text-align: center;
+    span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      ~ span {
+        margin-left: 12px;
+      }
+      &.active {
+        background: #fff;
       }
     }
   }

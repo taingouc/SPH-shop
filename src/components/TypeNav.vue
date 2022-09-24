@@ -9,17 +9,17 @@
             <div class="all-sort-list2" @click="goSearch">
               <div class="item" v-for="(c1, index) in categoryList" :key="c1.categoryId" @mouseenter="changeIndex(index)" :class="index == i ? 'MoveColor' : ''">
                 <h3>
-                  <a :data-categoryName="c1.categoryName" :data-categoryId="c1.categoryId">{{ c1.categoryName }}</a>
+                  <a :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
                 </h3>
                 <div class="item-list clearfix">
                   <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
                     <dl class="fore">
                       <dt>
-                        <a :data-categoryName="c2.categoryName" :data-categoryId="c2.categoryId">{{ c2.categoryName }}</a>
+                        <a :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{ c2.categoryName }}</a>
                       </dt>
                       <dd>
                         <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                          <a :data-categoryName="c3.categoryName" :data-categoryId="c3.categoryId">{{ c3.categoryName }}</a>
+                          <a :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName }}</a>
                         </em>
                       </dd>
                     </dl>
@@ -66,8 +66,20 @@ export default {
     }, 50),
     goSearch(e) {
       if (e.target.dataset.categoryname) {
-        let query = { categoryName: e.target.dataset.categoryname, categoryId: e.target.dataset.categoryid }
-        this.$router.push({ name: 'search', query })
+        const query = { categoryName: e.target.dataset.categoryname }
+        if (e.target.dataset.category1id) {
+          query.category1Id = e.target.dataset.category1id
+        } else if (e.target.dataset.category2id) {
+          query.category2Id = e.target.dataset.category2id
+        } else {
+          query.category3Id = e.target.dataset.category3id
+        }
+        if (this.$route.params) {
+          const params = this.$route.params
+          this.$router.push({ name: 'search', params, query })
+        } else {
+          this.$router.push({ name: 'search', query })
+        }
       }
     },
     showCategory() {
@@ -82,9 +94,6 @@ export default {
     ...mapState({
       categoryList: (state) => state.home.categoryList
     })
-  },
-  mounted() {
-    this.$store.dispatch('home/CategoryListAsync')
   }
 }
 </script>
